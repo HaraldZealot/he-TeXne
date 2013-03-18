@@ -1,0 +1,7 @@
+*.pdf
+*~
+*.aux
+*.log
+/Kuratarstvo
+/Group1b
+*.backup

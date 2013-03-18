@@ -1,0 +1,136 @@
+\documentclass[12pt, oneside]{article} 
+\usepackage[xetex, a4paper, left=2cm, right=2cm, top=2cm,bottom=2cm]{geometry}
+\usepackage[cm-default]{fontspec}
+\usepackage{xunicode}
+\usepackage{xltxtra}
+
+\tolerance=1000
+\emergencystretch=0.74cm 
+
+\usepackage{polyglossia}
+\setdefaultlanguage[spelling=modern]{russian}
+\setotherlanguage{english} 
+\defaultfontfeatures{Scale=MatchLowercase,Ligatures=TeX}  %% устанавливает поведение шрифтов по умолчанию  
+\newfontfamily\cyrillicfont{Linux Libertine} 
+\setromanfont[Mapping=tex-text]{Linux Libertine}
+\setsansfont[Mapping=tex-text]{Linux Biolinum}
+\setmonofont{DejaVu Sans Mono}
+%\newfontfamily\cyrillicfont{Liberation Mono} 
+
+\usepackage{makecell}
+
+\usepackage{titlesec}
+\newcommand{\sectionbreak}{\clearpage}
+
+\renewcommand{\thesection}{\Alph{section}}
+\newcount\wd    \wd=\textwidth \multiply\wd by 8 \divide\wd by 17
+\newcount\wdf   \wdf=\textwidth \multiply\wdf by 16 \divide\wdf by 17
+
+\author{Aliaksiej Stankievič}
+\title{Групповые задачи на обходы}
+\begin{document}
+\section{Калькулятор командной строки}
+
+Программа выдаёт приглашение командной строки на ввод. Пользователь может ввести выражение в инфиксной (обычной) форме. Выражение может содержать следующие операции: $+$, $-$\footnote{только бинарный}, $\ast$, $/$, \textasciicircum\footnote{возведение в степень}  с естественными приоритетами, также могут употребляться круглые скобки, для изменения порядка выполнения операций (любой глубины вложенности) и числа, которые представлены десятичной записью (например, 12 или 3.14 (с точкой)). Все действия над числами интерпретируются так, как если бы они все были вещественными. Программа вычисляет значение выражение и выводит его, и снова выдаёт приглашение командной строки на ввод. Выход из программы осуществляется по ключевому слову (например, exit). Также у программы должен быть второй режим работы: после имени программы через пробел пишется вычисляемое выражение, программа его вычисляет и завершает работу. Программа должна выдать консольную помощь\footnote{как при выполнении с соответствующей опцией, так и при ключевом слове в собственной командной строке}, и выдавать сообщения об ошибках.
+
+\subsection*{Идея}
+Идея программы заключается в приведении инфиксной формы в постфиксную (обратная польская запись), это осуществляется с помощью стека. Затем постфиксная форма вычисляется, опять же с помощью стека. Постфиксную форму можно хранить (а можно и не хранить), для хранения оказывается удобной очередь.
+
+Дальнейшие развитие может быть осуществлено добавлением математических функций (sin, cos, exp и т.д.) и унарного минуса, а также вводом специальной переменной ans, ответа предыдущего вычисления.
+
+\subsection*{Ввод}
+
+Однострочное инфиксное выражение. Не содержит переводов строк, но может содержать пробелы, которые игнорируются.
+
+\subsection*{Вывод}
+
+Результат выражения, либо сообщение об ошибке (синтаксическая или математическая).
+
+\subsection*{Пример}
+
+\begin{tabular}{| p{\number\wdf sp} |}
+\hline
+\textdollar calc \\
+>2+2\\
+4\\
+>help\\
+type in mathematical expression, for example:\\
+(1.4-18)/5\textasciicircum2\\
+>exit\\
+\textdollar calc 2\textasciicircum(1/2)\\
+1.41421356\\
+\textdollar calc \textendash\textendash{}help\\
+CLI calculator\\
+\\
+usage: calc [EXPRESSION]\\
+EXPRESSION must be \\correct mathematical expression, for example:\\
+(1.4-18)/5\textasciicircum2\\
+\textdollar \\
+\hline
+\end{tabular}
+
+\section{``Пьяница''}
+
+\subsection*{Идея}
+
+\subsection*{Ввод}
+
+\subsection*{Вывод}
+
+\subsection*{Пример}
+
+\begin{tabular}{| p{\number\wdf sp} |}
+\hline
+\\
+\hline
+\end{tabular}
+
+\section{``Симплетрон'' с подпрограммами}
+
+\subsection*{Идея}
+
+\subsection*{Ввод}
+
+\subsection*{Вывод}
+
+\subsection*{Пример}
+
+\begin{tabular}{| p{\number\wdf sp} |}
+\hline
+\\
+\hline
+\end{tabular}
+
+\section{Лифт}
+
+\subsection*{Идея}
+
+\subsection*{Ввод}
+
+\subsection*{Вывод}
+
+\subsection*{Пример}
+
+\begin{tabular}{| p{\number\wdf sp} |}
+\hline
+\\
+\hline
+\end{tabular}
+
+\section{``Пьяница''}
+
+\subsection*{Идея}
+
+\subsection*{Ввод}
+
+\subsection*{Вывод}
+
+\subsection*{Пример}
+
+\begin{tabular}{| p{\number\wdf sp} |}
+\hline
+\\
+\hline
+\end{tabular}
+
+\end{document}
