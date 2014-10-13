@@ -1,0 +1,242 @@
+\documentclass[12pt]{article} 
+\usepackage[xetex, a4paper, left=2cm, right=2cm, top=2cm,bottom=2cm]{geometry}
+\usepackage[cm-default]{fontspec}
+\usepackage{xunicode}
+
+%\tolerance=1000
+%\emergencystretch=0.74cm 
+
+\usepackage{polyglossia}
+\setdefaultlanguage[spelling=modern]{russian}
+\setotherlanguage{english} 
+\defaultfontfeatures{Scale=MatchLowercase,Ligatures=TeX}  %% устанавливает поведение шрифтов по умолчанию  
+\newfontfamily\cyrillicfont{Linux Libertine} 
+\setromanfont[Mapping=tex-text]{Linux Libertine}
+\setsansfont[Mapping=tex-text]{Linux Biolinum}
+\setmonofont{DejaVu Sans Mono}
+%\newfontfamily\cyrillicfont{Liberation Mono} 
+
+%\usepackage{makecell}
+
+%\usepackage{titlesec}
+%\newcommand{\sectionbreak}{\clearpage}
+
+%\renewcommand{\thesection}{\Alph{section}}
+%\newcount\wd    \wd=\textwidth \multiply\wd by 8 \divide\wd by 17
+
+\usepackage{minted}
+\usemintedstyle{friendly}
+\renewcommand\listingscaption{Код}
+\newminted{bash}{frame=lines}
+\newminted{c}{frame=leftline}
+\newminted{cpp}{frame=leftline}
+
+\usepackage[unicode, pdfborder={0 0 0 0}]{hyperref}
+
+\author{Alaksiej Stankievič}
+\title{лабораторная работа}
+
+\begin{document}
+\hypersetup{
+pdftitle = {OOP 04 lab},
+pdfauthor = {Alaksiej Stankievič},
+pdfsubject = {лабораторная работа}
+}% End of hypersetup
+
+\section{Композиция. Паттерн pimpl}
+Композиция --- это когда класс используют экземпляр, указатель или ссылку на другой класс, для реализации своей 
+функциональности\footnote{например, в классе Car четыре экземпляра класса Wheel.}. Композиция самый слабый вид связи. 
+
+Паттерн --- это особый часто встречающийся способ решения какой-либо проблемы\footnote{мы стараемся не употреблять 
+слово шаблон, чтобы не путать с соответствующей конструкцией языка C++.}.
+
+Паттерн pimpl\footnote{от pointer to implementation, в книге GoF называется мост.} это пат-терн служащий для сильной 
+модуляризации объектных программ. Он часто используется при написании библиотек, так как сильно разделяет интерфейс и 
+реализацию (нет необходимости перекомпилировать программы при смене реализации). 
+
+Паттерн pimpl основан на композиции. Создаётся два класса: класс реализации выполняющий всю работу, он скрыт от 
+пользователя и поэтому может безболезненно изменяться и класс обёртка, который содержит интерфейс для внешнего 
+использования (также интерфейс для потомков если необходимо) и приватный указатель на класс реализацию (отсюда и 
+название). Когда пользователь вызывает методы класса обёртки, она перепоручает всю работу классу реализации.
+
+\begin{listing}[H]
+\begin{center}
+\begin{cppcode}
+//файл object.h
+...
+class Object
+{
+public:
+    void funToAll(char value);
+    ...
+protected:
+    int funToChildren();
+    ...
+private:
+    class Implementation *pimpl;
+};
+
+//файл object.cpp
+void Object::funToAll(char value)
+{
+    pimpl->funToAll(value);
+}
+...
+class Object::Implementation
+{
+public:
+    void funToAll(char value);
+    int funToChildren();
+    ...
+private:
+    ...
+};
+\end{cppcode}
+\end{center}
+\caption{Пример паттерна pimpl}
+\label{lst:pimpl}
+\end{listing}
+
+\section{Наследование. Патерн NVI}
+Наследование --- это реализация связи <<является>> между двумя классами, которая отражена в 
+синтаксисе\footnote{при желании мы можем реализовать связь является и с помощью композиции (тот же pimpl) поэтому 
+требования отражения в синтаксисе существенно.}. Принцип подстановки Лисков даёт критерий правомерно ли в данной 
+ситуации использовать публичное наследование: наследование корректно если нам для выполнения функциональности 
+заложенной в предке не нужно выполнять никаких ухищрений если нам передали потомка, то есть мы всегда безболезненно 
+можем подставить потомка вместо предка\footnote{отсюда названия принципа.}.
+
+Паттерн NVI\footnote{non virtual interface.} также служит целям модуляризации. Он не достигает такого сильного 
+разделения как паттерн pimpl, но нужно затратить меньше усилий при его реализации, также он сохраняет спецификаторы 
+константности. Суть паттерна состоит в том, что публичный интерфейс не виртуальный\footnote{отсюда название}, а 
+следовательно при обращении по указателю будет вызван всегда метод предка. Но сам метод выполняет свою работу вызывая 
+один или несколько методов которые закрыты и виртуальны.
+
+\begin{listing}[H]
+\begin{center}
+\begin{cppcode}
+class P
+{
+public:
+    int process();
+private:
+    virtual void phase1();
+    virtual int phase2();
+};
+
+int P::process()
+{
+    phase1();
+    int result = phase2();
+    phase1();
+    return result;
+}
+
+class Q: public P
+{
+private:
+    void phase1()override; // нет требования, 
+    //чтобы были замещены все виртуальные функции
+};
+
+
+
+//вот как это работает
+//считаем, что пользователь сделал selection
+P *p = nullptr;
+p = selection ? new P() : new Q();
+for(int i=0; i<n; ++i)
+    cout << p->process();
+\end{cppcode}
+\end{center}
+\caption{Паттерн NVI}
+\label{lst:nvi}
+\end{listing}
+
+\section{Методы итерирования по структуре}
+Для того, чтобы реализовать методы вывода в консольных классах из задания нам необходимо получить доступ ко всем 
+элементам структуры в некотором порядке\footnote{сделать данные защищёнными нельзя так как это нарушения инкапсуляции, 
+возвращать внутренние представления тоже нельзя, так как это фактически тоже утечка доступа. Лабораторные, в которых 
+будут защищённые данные или методы доступа к ним, будут отправлены на переделку.}. Соответствующие методы перебора 
+информации должны быть защищёнными (уровень доступа protected).
+
+Этого не нарушая инкапсуляции можно добиться 3 способами:
+\begin{enumerate}
+ \item Передать внутрь объекта стандартную структуру для заполнения, например массив (см. листинг \ref{lst:array}).
+ \item Написать функцию с внутренним состоянием (см. листинг \ref{lst:statefunction}).
+ \item Написать функцию, которая получает указатель на функцию обработчик, который применяется ко всем элементам 
+структуры самим классом структуры (паттерн посетитель по GoF) (см. листинг \ref{lst:visitor}).
+\end{enumerate}
+\begin{listing}[H]
+\begin{center}
+\begin{cppcode}
+void fillArray(Data *array, int &size);//размер изменится
+//также этой функции можно поручить выделение памяти на массив
+//тогда  указатель нужно предать по ссылке
+
+//теперь массив можно использовать для вывода.
+\end{cppcode}
+\end{center}
+\caption{Заполнение массива данными структуры}
+\label{lst:array}
+\end{listing}
+
+\begin{listing}[H]
+\begin{center}
+\begin{cppcode}
+bool currentElement(Data &returnValue, bool firstTime=false);
+//функция возвращает ложь,
+//если в структуре больше нет элементов и брать элемент нельзя
+//На откуп программисту оставляется, 
+//чем будет returnValue первый раз.
+//В моей реализации returnValue первый раз
+//не получает значение.
+
+
+//вот как этой функцией пользоваться:
+Data data;
+currentElement(data, true);
+while(currentElement(data))
+{
+    cout << data << " ";
+}
+\end{cppcode}
+\end{center}
+\caption{Функция с состоянием}
+\label{lst:statefunction}
+\end{listing}
+
+\begin{listing}[H]
+\begin{center}
+\begin{cppcode}
+//пусть написана функция обработчик
+void printer(Data data)
+{
+    cout << data << " ";
+}
+
+//вот прототип защищённой функции применяющей обработчик
+void makeVisit(void (*visitor)(Data));
+
+//а вот так она вызывается
+makeVisit(printer);
+\end{cppcode}
+\end{center}
+\caption{Применение обработчика}
+\label{lst:visitor}
+\end{listing}
+
+
+\section*{Задание}
+Для выполнения задания необходимо изменить архитектуру программы написанной к третьей лабораторной. У основной 
+структуры данных (в зависимости от задания: стек, очередь, список, дерево, граф, петля, дерамида и т.д), нужно отделить 
+консольную функциональность (если она была). И реализовать эту структуру используя паттерн pimpl. От 
+интерфейса-оболочки унаследовать класс, который дополняет вашу структуру данных выводом на консоль (даже если этого не 
+было). От это класса унаследовать ещё один класс, у которого вывод более красив (настолько, насколько можете придумать и 
+запрограммировать, минимально он должен выдавать номера элементов). При наследовании улучшенного класса от обычного 
+консольного использовать паттерн NVI.
+
+С использованием консольного и улучшенного консольного\footnote{предоставьте пользователю возможность выбора, и в 
+зависимости от этого выбора создавайте объекты разных классов, работайте с ними через указатель на простой консольный 
+класс.} класса реализуйте основную задачу с выводом состояния структуры на каждом шаге.
+
+\end{document}
