@@ -1,0 +1,78 @@
+\documentclass[12pt]{article} 
+\usepackage[xetex, a4paper, left=2cm, right=2cm, top=2cm,bottom=2cm]{geometry}
+\usepackage[cm-default]{fontspec}
+\usepackage{xunicode}
+
+%\tolerance=1000
+%\emergencystretch=0.74cm 
+
+\usepackage{polyglossia}
+\setdefaultlanguage[spelling=modern]{russian}
+\setotherlanguage{english} 
+\defaultfontfeatures{Scale=MatchLowercase,Ligatures=TeX}  %% устанавливает поведение шрифтов по умолчанию  
+\newfontfamily\cyrillicfont{Linux Libertine} 
+\setromanfont[Mapping=tex-text]{Linux Libertine}
+\setsansfont[Mapping=tex-text]{Linux Biolinum}
+\setmonofont{DejaVu Sans Mono}
+%\newfontfamily\cyrillicfont{Liberation Mono} 
+
+%\usepackage{makecell}
+
+%\usepackage{titlesec}
+%\newcommand{\sectionbreak}{\clearpage}
+
+%\renewcommand{\thesection}{\Alph{section}}
+%\newcount\wd    \wd=\textwidth \multiply\wd by 8 \divide\wd by 17
+
+\usepackage{minted}
+\usemintedstyle{friendly}
+\renewcommand\listingscaption{Код}
+\newminted{bash}{frame=lines}
+\newminted{c}{frame=leftline}
+
+\usepackage[unicode, pdfborder={0 0 0 0}]{hyperref}
+
+\author{Alaksiej Stankievič}
+\title{Домашнее задание}
+
+\begin{document}
+\hypersetup{
+pdftitle = {Java 5, 6},
+pdfauthor = {Alaksiej Stankievič},
+pdfsubject = {лабараторная работа}
+}% End of hypersetup
+
+Основная цель 5 лабораторной --- научиться работать с потоками (Tread), 
+основная цель 6 --- научиться пользовать протоколом TCP/IP. Однако,  придумать 
+задания в достаточном числе вариантов для 5 лабораторной, чтобы при этом они 
+были достаточно простыми сложно. Поэтому я решил совместить 5 и 6 лабораторную 
+в одну, так как сетевое решение с более чем двумя клиентами требует 
+многопоточности, а придумать достаточное количество сетевых задач легко. Для 
+небольшого числа людей (список которых я буду утверждать) будет позволено 
+написать несложную чисто-многопоточную программу и сетевое приложение только с 
+двумя взаимодействующими компонентами (оно не требует многопоточности). В любом 
+случае дедлайн будет по сроку 6 лабораторной.
+
+\section*{Лабораторная 5}
+
+
+
+\begin{enumerate}
+	\item Реализовать паралельную сортировку слиянием.
+	\item Реализовать sleep <<сортировку>> целых чисел.
+	\item .
+\end{enumerate}
+
+\section*{Лабораторная 6}
+
+Создать простою сетвую игру на 2 человек. Один запускает сервер второй --- 
+клиент.
+
+\section*{Совмещённая лабораторная 5 и 6}
+
+Реализовать сетевое приложение имеющее один сервер и как минимум два клиента. 
+Сервер обрабатывает каждого клиента в отдельном (или отдельных) потоке. В 
+первую очередь ориентирую на сетевые консольные игры. Можно сделать 
+полнофункциональный чат (не более 2 человек из группы с таким заданием).
+
+\end{document}
